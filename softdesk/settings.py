@@ -137,3 +137,6 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }
+
+# Utilisateur personnalisé
+AUTH_USER_MODEL = 'api.User'
