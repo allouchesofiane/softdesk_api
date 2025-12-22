@@ -141,3 +141,88 @@ class Contributor(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.project.name} ({self.role})"
+
+
+class Issue(models.Model):
+    """
+    Modèle représentant un problème/tâche d'un projet
+    """
+    PRIORITY_CHOICES = [
+        ('LOW', 'Basse'),
+        ('MEDIUM', 'Moyenne'),
+        ('HIGH', 'Haute'),
+    ]
+
+    STATUS_CHOICES = [
+        ('To Do', 'À faire'),
+        ('In Progress', 'En cours'),
+        ('Finished', 'Terminé'),
+    ]
+
+    TAG_CHOICES = [
+        ('BUG', 'Bug'),
+        ('FEATURE', 'Fonctionnalité'),
+        ('TASK', 'Tâche'),
+    ]
+
+    title = models.CharField(
+        max_length=255,
+        verbose_name="Titre"
+    )
+    
+    description = models.TextField(
+        verbose_name="Description",
+    )
+    
+    priority = models.CharField(
+        max_length=10,
+        choices=PRIORITY_CHOICES,
+        verbose_name="Priorité"
+    )
+    
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        verbose_name="Statut"
+    )
+    
+    tag = models.CharField(
+        max_length=20,
+        choices=TAG_CHOICES,
+        verbose_name="Balise"
+    )
+    
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='issues',
+        verbose_name="Projet"
+    )
+    
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='authored_issues',
+        verbose_name="Auteur"
+    )
+    
+    assigned_to = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='assigned_issues',
+        null=True,
+        blank=True,
+        verbose_name="Assigné à"
+    )
+    
+    created_time = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date de création"
+    )
+
+    class Meta:
+        verbose_name = "Issue"
+        ordering = ['-created_time']
+
+    def __str__(self):
+        return f"{self.title} ({self.project.name})"
