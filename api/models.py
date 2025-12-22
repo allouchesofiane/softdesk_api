@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from datetime import date
+import uuid
+
 
 class User(AbstractUser):
     """
@@ -226,3 +228,45 @@ class Issue(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.project.name})"
+    
+    
+class Comment(models.Model):
+    """
+    Modèle représentant un commentaire 
+    """
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+        verbose_name="Identifiant unique"
+    )
+    
+    description = models.TextField(
+        verbose_name="Commentaire"
+    )
+    
+    issue = models.ForeignKey(
+        Issue,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name="Issue"
+    )
+    
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='authored_comments',
+        verbose_name="Auteur"
+    )
+    
+    created_time = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date de création"
+    )
+
+    class Meta:
+        verbose_name = "Commentaire"
+        ordering = ['-created_time']
+
+    def __str__(self):
+        return f"Commentaire de {self.author.username} sur {self.issue.title}"
