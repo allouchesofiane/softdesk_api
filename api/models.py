@@ -97,3 +97,47 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Contributor(models.Model):
+    """
+    Modèle représentant un contributeur d'un projet
+    """
+    ROLE_CHOICES = [
+        ('author', 'Auteur'),
+        ('contributor', 'Contributeur'),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='contributions',
+        verbose_name="Utilisateur"
+    )
+    
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='contributors',
+        verbose_name="Projet"
+    )
+    
+    role = models.CharField(
+        max_length=20,
+        choices=ROLE_CHOICES,
+        default='contributor',
+        verbose_name="Rôle"
+    )
+    
+    created_time = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date d'ajout"
+    )
+
+    class Meta:
+        verbose_name = "Contributeur"
+        ordering = ['-created_time']
+        unique_together = ['user', 'project']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.project.name} ({self.role})"
