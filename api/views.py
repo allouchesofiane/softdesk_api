@@ -7,7 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 from api.serializers.project_serializer import ProjectSerializer
 from api.permissions.project_permissions import IsProjectContributor, IsProjectAuthor
 from api.models import Project, Contributor
-
+from api.serializers.contributor_serializer import ContributorSerializer
 
 @api_view(['POST'])
 @permission_classes([AllowAny]) 
@@ -58,3 +58,11 @@ class ProjectViewSet(ModelViewSet):
             project=project,
             defaults={"role": "author"},
         )
+
+class ContributorViewSet(ModelViewSet):
+    serializer_class = ContributorSerializer
+
+    def get_queryset(self):
+        return Contributor.objects.filter(
+            project__contributors__user=self.request.user
+        ).distinct()
