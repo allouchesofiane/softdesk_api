@@ -7,7 +7,7 @@ class IsCommentIssueProjectContributor(BasePermission):
     Autorise l'accès uniquement aux contributeurs du projet lié à l'issue du commentaire.
     """
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, obj):
         return Contributor.objects.filter(
             user=request.user,
             project=obj.issue.project
@@ -19,7 +19,7 @@ class IsCommentAuthor(BasePermission):
     Autorise modification/suppression uniquement à l'auteur du commentaire.
     """
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, obj):
         if request.method in SAFE_METHODS:
             return True
         return obj.author == request.user

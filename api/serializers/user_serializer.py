@@ -2,7 +2,7 @@ from rest_framework import serializers
 from api.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-
+from datetime import date
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """
@@ -11,12 +11,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
         required=True,
-        style={'input_type': 'password'}
     )
     password_confirm = serializers.CharField(
         write_only=True,
         required=True,
-        style={'input_type': 'password'}
     )
 
     class Meta:
@@ -33,6 +31,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id']
 
+    def validate_date_of_birth(self, value):
+        """
+        Validation RGPD : vérifier que l'utilisateur a au moins 15 ans
+        """
+        today = date.today()
+        age = today.year - value.year - (
+            (today.month, value.day) < (value.month, value.day)
+        )
+    
+        if age < 15:
+            raise serializers.ValidationError(
+                "Vous devez avoir au moins 15 ans pour vous inscrire."
+            )
+    
+        return value
+    
     def validate(self, data):
         """
         Validation globale des données

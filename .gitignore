@@ -17,8 +17,9 @@ db.sqlite3-journal
 media/
 staticfiles/
 
-# Requirements
+# Pipenv (IMPORTANT: keep Pipfile.lock tracked)
 *.lock
+!Pipfile.lock
 
 # IDE
 .vscode/
@@ -29,3 +30,6 @@ staticfiles/
 # OS
 .DS_Store
 Thumbs.db
+
+# Secrets
+.env

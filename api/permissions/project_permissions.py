@@ -8,7 +8,7 @@ class IsProjectContributor(BasePermission):
     (SAFE_METHODS inclus : lecture)
     """
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, obj):
         return Contributor.objects.filter(user=request.user, project=obj).exists()
 
 
@@ -18,7 +18,7 @@ class IsProjectAuthor(BasePermission):
     La lecture reste gérée par IsProjectContributor.
     """
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, obj):
         if request.method in SAFE_METHODS:
             return True
         return obj.author == request.user

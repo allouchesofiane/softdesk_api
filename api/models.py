@@ -51,7 +51,7 @@ class User(AbstractUser):
 
         if self.age < 15:
             raise ValidationError(
-                {"date de naissance": "Vous devez avoir au moins 15 ans pour vous inscrire."}
+                {"date_of_birth": "Vous devez avoir au moins 15 ans pour vous inscrire."}
             )
         
 
@@ -96,9 +96,6 @@ class Project(models.Model):
     class Meta:
         verbose_name = "Projet"
         ordering = ['-created_time']
-
-    def __str__(self):
-        return self.name
     
 
 class Contributor(models.Model):
@@ -141,13 +138,10 @@ class Contributor(models.Model):
         ordering = ['-created_time']
         unique_together = ['user', 'project']
 
-    def __str__(self):
-        return f"{self.user.username} - {self.project.name} ({self.role})"
-
 
 class Issue(models.Model):
     """
-    Modèle représentant un problème/tâche d'un projet
+    Modèle représentant un problème d'un projet
     """
     PRIORITY_CHOICES = [
         ('LOW', 'Basse'),
@@ -225,9 +219,6 @@ class Issue(models.Model):
     class Meta:
         verbose_name = "Issue"
         ordering = ['-created_time']
-
-    def __str__(self):
-        return f"{self.title} ({self.project.name})"
     
     
 class Comment(models.Model):
@@ -268,5 +259,4 @@ class Comment(models.Model):
         verbose_name = "Commentaire"
         ordering = ['-created_time']
 
-    def __str__(self):
-        return f"Commentaire de {self.author.username} sur {self.issue.title}"
+   

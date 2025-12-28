@@ -21,7 +21,7 @@ class IssueSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         """
-        Règle métier SoftDesk : assigned_to doit être contributeur du projet.
+        Assigned_to doit être contributeur du projet.
         """
         # project : peut venir de attrs (POST) ou de l'instance (PATCH)
         project = attrs.get("project") or getattr(self.instance, "project", None)
