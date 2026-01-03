@@ -21,24 +21,20 @@ class IssueSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         """
-        Règle métier : assigned_to doit être contributeur du projet
+        Assigned_to doit être contributeur du projet.
         """
-        # Récupérer le projet (création ou modification)
-        project = attrs.get("project")
-        if not project and self.instance:
-            project = self.instance.project
-
+        # project : peut venir de attrs (POST) ou de l'instance (PATCH)
+        project = attrs.get("project") or getattr(self.instance, "project", None)
         assigned_to = attrs.get("assigned_to")
 
-        # Si pas d'assignation, pas de validation nécessaire
+        # Si on n'assigne personne, pas de contrainte
         if not assigned_to:
             return attrs
 
-        # Si pas de projet, on ne peut pas valider (sera géré par DRF)
+        # Si pas de projet détecté, on laisse DRF gérer l'erreur standard
         if not project:
             return attrs
 
-        # Vérifier que assigned_to est contributeur du projet
         is_contributor = Contributor.objects.filter(
             project=project,
             user=assigned_to

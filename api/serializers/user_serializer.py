@@ -19,7 +19,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        # Ce que l'API accepte
         fields = [
             'id',
             'username',
@@ -34,11 +33,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def validate_date_of_birth(self, value):
         """
-        Vérifier que l'utilisateur a au moins 15 ans
+        Validation RGPD : vérifier que l'utilisateur a au moins 15 ans
         """
         today = date.today()
         age = today.year - value.year - (
-            (today.month, today.day) < (value.month, value.day)
+            (today.month, value.day) < (value.month, value.day)
         )
     
         if age < 15:
@@ -94,7 +93,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        # Ce que l'API renvoie
         fields = [
             'id',
             'username',
@@ -105,5 +103,4 @@ class UserSerializer(serializers.ModelSerializer):
             'can_data_be_shared',
             'created_time',
         ]
-        # ne peuvent pas être modifiés, sont ignorés si envoyés par le client
         read_only_fields = ['id', 'created_time', 'age']

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from datetime import date
 import uuid
 
@@ -43,6 +44,15 @@ class User(AbstractUser):
         ):
             age -= 1
         return age
+
+    def clean(self):
+        if not self.date_of_birth:
+            return None
+
+        if self.age < 15:
+            raise ValidationError(
+                {"date_of_birth": "Vous devez avoir au moins 15 ans pour vous inscrire."}
+            )
         
 
 class Project(models.Model):

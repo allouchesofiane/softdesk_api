@@ -7,15 +7,19 @@ class IsProjectAuthorForContributor(BasePermission):
     Lecture: autorisée aux contributeurs du projet
     Écriture: réservée à l'auteur du projet
     """
-    def has_object_permission(self, request, view, obj):
+
+    def has_object_permission(self, request, obj):
+        # obj = Contributor
         if request.method in SAFE_METHODS:
             return Contributor.objects.filter(
                 user=request.user,
                 project=obj.project
             ).exists()
+
         return obj.project.author == request.user
-    
-    def has_permission(self, request, view):
+
+    def has_permission(self, request):
+        # Pour POST (création), on contrôle via le project fourni
         if request.method in SAFE_METHODS:
             return True
 
