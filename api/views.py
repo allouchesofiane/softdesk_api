@@ -15,8 +15,8 @@ from api.permissions.comment_permissions import IsCommentIssueProjectContributor
 from api.permissions.contributor_permissions import IsProjectAuthorForContributor
 
 
-@api_view(['POST'])
-@permission_classes([AllowAny]) 
+@api_view(['POST']) # Cette URL accepte uniquement POST
+@permission_classes([AllowAny]) # Tout le monde peut appeler cette route (même sans être connecté)
 def signup(request):
     """
     Endpoint d'inscription d'un nouvel utilisateur
@@ -51,7 +51,7 @@ def get_current_user(request):
 # Projet
 class ProjectViewSet(ModelViewSet):
     serializer_class = ProjectSerializer
-    permission_classes = [IsProjectContributor & IsProjectAuthor]
+    permission_classes = [IsAuthenticated, IsProjectContributor, IsProjectAuthor]
 
     def get_queryset(self):
         return Project.objects.filter(
@@ -80,7 +80,7 @@ class ContributorViewSet(ModelViewSet):
 # Issue
 class IssueViewSet(ModelViewSet):
     serializer_class = IssueSerializer
-    permission_classes = [IsIssueProjectContributor & IsIssueAuthor]
+    permission_classes = [IsIssueProjectContributor, IsIssueAuthor]
 
     def get_queryset(self):
         return Issue.objects.filter(
@@ -95,7 +95,7 @@ class IssueViewSet(ModelViewSet):
 class CommentViewSet(ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [
-        IsCommentIssueProjectContributor & IsCommentAuthor
+        IsCommentIssueProjectContributor, IsCommentAuthor
     ]
 
     def get_queryset(self):
